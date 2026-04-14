@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Services - Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #f8fafc; font-family: sans-serif; }
+        .dha-blue { color: #002b5c; }
+        .dha-bg-blue { background-color: #002b5c; }
+        .sidebar-item:hover { background-color: #f1f5f9; color: #b91c1c; }
+        .error-banner { background-color: #fef2f2; border: 1px solid #fee2e2; color: #991b1b; }
+        .info-banner { background-color: #fffbeb; border: 1px solid #fef3c7; color: #92400e; }
+    </style>
+</head>
+<body class="text-sm">
+
+    <div class="bg-red-400 text-white text-center py-1 font-bold text-xs">Development</div>
+
+    <header class="bg-white border-b px-8 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <div class="flex flex-col items-center">
+                <div class="w-8 h-1 bg-red-700"></div>
+                <div class="w-8 h-1 bg-blue-900 mt-1"></div>
+            </div>
+            <span class="text-xl font-bold dha-blue tracking-tight">Online Services</span>
+        </div>
+        <div class="text-xs text-gray-600 flex items-center space-x-4">
+            <span><strong>Employee ID</strong> 8109744</span>
+            <span class="border-l pl-4 text-blue-700 underline">sutherlands.au@gmail.com.dhadev</span>
+            <span class="border-l pl-4 text-blue-700 underline">Logout</span>
+        </div>
+    </header>
+
+    <nav class="bg-white border-b px-8 flex space-x-8 text-gray-600 font-medium py-3">
+        <a href="#" class="hover:text-blue-900">Dashboard</a>
+        <a href="#" class="hover:text-blue-900">Service Residence <i class="fas fa-chevron-down text-[10px]"></i></a>
+        <a href="#" class="hover:text-blue-900">Rent Allowance <i class="fas fa-chevron-down text-[10px]"></i></a>
+        <a href="#" class="hover:text-blue-900">LIA <i class="fas fa-chevron-down text-[10px]"></i></a>
+        <a href="#" class="hover:text-blue-900">MCA <i class="fas fa-chevron-down text-[10px]"></i></a>
+        <a href="#" class="hover:text-blue-900">Member Resources <i class="fas fa-external-link-alt text-[10px]"></i></a>
+        <div class="flex-grow text-right">
+            <a href="#" class="hover:text-blue-900">My Account <i class="fas fa-chevron-down text-[10px]"></i></a>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto flex mt-6 px-4 pb-20">
+        
+        <aside class="w-64 bg-white border rounded shadow-sm h-fit">
+            <div class="sidebar-item p-4 border-b flex justify-between items-center text-red-700 font-bold border-l-4 border-l-red-700">
+                <span><i class="fas fa-user mr-3"></i> My Profile</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+            </div>
+            <div class="sidebar-item p-4 border-b flex justify-between items-center text-gray-700">
+                <span><i class="fas fa-key mr-3"></i> Change Password</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+            </div>
+            <div class="sidebar-item p-4 border-b flex justify-between items-center text-gray-700">
+                <span><i class="fas fa-id-card mr-3"></i> Change Username</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+            </div>
+            <div class="sidebar-item p-4 border-b flex justify-between items-center text-gray-700">
+                <span><i class="fas fa-lock mr-3"></i> Multi-Factor Authentication</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+            </div>
+            <div class="sidebar-item p-4 border-b flex justify-between items-center text-gray-700">
+                <span><i class="fas fa-bell mr-3"></i> View Notifications</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+            </div>
+            <div class="sidebar-item p-4 border-b flex justify-between items-center text-gray-700">
+                <span><i class="fas fa-user-cog mr-3"></i> Change Access</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+            </div>
+            <div class="sidebar-item p-4 border-b flex justify-between items-center text-gray-700">
+                <span><i class="fas fa-users mr-3"></i> Manage Delegates</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+            </div>
+            <div class="sidebar-item p-4 border-b flex justify-between items-center text-gray-700">
+                <span><i class="fas fa-user-tie mr-3"></i> Manage Agents</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+            </div>
+            <div class="sidebar-item p-4 flex justify-between items-center text-gray-700">
+                <span><i class="fas fa-home mr-3"></i> Owned Properties</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+            </div>
+        </aside>
+
+        <section class="flex-1 ml-8">
+            <div class="error-banner p-3 rounded flex items-center mb-4">
+                <i class="fas fa-times-circle mr-3"></i>
+                <a href="#" class="underline">You must provide your date of birth.</a>
+            </div>
+            <div class="info-banner p-4 rounded flex items-start mb-6">
+                <i class="fas fa-exclamation-circle mr-3 mt-1 text-yellow-600"></i>
+                <p>In order for DHA to better serve you as an ADF member it is important that we have correct profile information for you. Your profile information is currently <strong>incomplete or invalid</strong>.</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-12">
+                <div>
+                    <h2 class="text-xl font-bold dha-blue border-b-2 border-blue-100 pb-2 mb-6">Contact Details</h2>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <label class="w-32 font-semibold text-gray-700">Date of Birth</label>
+                            <div class="flex border rounded-md overflow-hidden flex-grow bg-red-50">
+                                <input type="text" class="flex-grow p-2 outline-none bg-transparent">
+                                <button class="dha-bg-blue text-white px-3"><i class="fas fa-calendar-alt"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <label class="w-32 font-semibold text-gray-700 pt-2">Home Email</label>
+                            <div class="flex-grow">
+                                <input type="text" value="sutherlands.au@dummy.com" class="w-full border rounded p-2 mb-2 bg-gray-50">
+                                <label class="flex items-center text-gray-600"><input type="checkbox" class="mr-2"> Preferred</label>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <label class="w-32 font-semibold text-gray-700 pt-2">Work Email</label>
+                            <div class="flex-grow">
+                                <input type="text" class="w-full border rounded p-2 mb-2 bg-gray-50">
+                                <label class="flex items-center text-gray-600"><input type="checkbox" class="mr-2"> Preferred</label>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <label class="w-32 font-semibold text-gray-700 pt-2"><i class="fas fa-question-circle mr-1 text-blue-900"></i> Home Phone</label>
+                            <div class="flex-grow">
+                                <input type="text" value="+61XXXXXXXXXX" class="w-full border rounded p-2 mb-2 bg-gray-50">
+                                <label class="flex items-center text-gray-600"><input type="checkbox" class="mr-2"> Preferred</label>
+                            </div>
+                        </div>
+
+                        <div class="mt-8">
+                            <h3 class="font-bold dha-blue border-b pb-2 mb-4">Preferred Contact Method</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-6 bg-green-500 rounded-full relative flex items-center px-1">
+                                        <div class="bg-white w-4 h-4 rounded-full shadow translate-x-6"></div>
+                                        <span class="absolute left-1 text-[10px] text-white font-bold">Yes</span>
+                                    </div>
+                                    <span class="font-bold">Phone</span>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-6 bg-green-500 rounded-full relative flex items-center px-1">
+                                        <div class="bg-white w-4 h-4 rounded-full shadow translate-x-6"></div>
+                                        <span class="absolute left-1 text-[10px] text-white font-bold">Yes</span>
+                                    </div>
+                                    <span class="font-bold">Email</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8">
+                            <h3 class="font-bold dha-blue border-b pb-2 mb-4">Postal Address</h3>
+                            <div class="flex items-center">
+                                <label class="w-32 font-semibold">Address</label>
+                                <div class="flex border rounded overflow-hidden flex-grow">
+                                    <input type="text" value="30 Flos Greig Street Watson A" class="flex-grow p-2 outline-none">
+                                    <button class="bg-blue-100 p-2 text-blue-900 border-l"><i class="fas fa-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-10">
+                    <section>
+                        <h2 class="text-xl font-bold dha-blue border-b-2 border-blue-100 pb-2 mb-4">Partner</h2>
+                        <div class="grid grid-cols-2 gap-y-3">
+                            <span class="font-semibold">Name</span>
+                            <span>Rita Sutherland</span>
+                            <span class="font-semibold">Phone</span>
+                            <a href="tel:0466301709" class="text-blue-700 underline">0466301709</a>
+                            <span class="font-semibold leading-tight">Authorised to contact DHA on Member's behalf</span>
+                            <div class="flex items-center space-x-4">
+                                <label class="flex items-center"><input type="radio" checked name="auth" class="mr-2 accent-blue-900"> Yes</label>
+                                <label class="flex items-center"><input type="radio" name="auth" class="mr-2"> No</label>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2 class="text-lg font-bold dha-blue border-b pb-2 mb-4">Resident family and/or Recognised other person</h2>
+                        <div class="grid grid-cols-2 gap-y-2 mb-8">
+                            <span class="font-semibold">Name</span> <span>Edward Sutherland</span>
+                            <span class="font-semibold">Date of Birth</span> <span>13/01/2013</span>
+                            <span class="font-semibold">Gender</span> <span>Male</span>
+                            <span class="font-semibold">School</span> <span>Not Applicable</span>
+                        </div>
+
+                        <hr class="my-6">
+
+                        <div class="grid grid-cols-2 gap-y-2 mb-8">
+                            <span class="font-semibold text-dha-blue">Name</span> <span>Juliet Sutherland</span>
+                            <span class="font-semibold">Date of Birth</span> <span>03/10/2014</span>
+                            <span class="font-semibold">Gender</span> <span>Female</span>
+                            <span class="font-semibold">School</span> <span>Not Applicable</span>
+                        </div>
+
+                        <hr class="my-6">
+
+                        <div class="grid grid-cols-2 gap-y-2">
+                            <span class="font-semibold text-dha-blue">Name</span> <span>Evangeline Sutherland</span>
+                            <span class="font-semibold">Date of Birth</span> <span>02/08/2019</span>
+                            <span class="font-semibold">Gender</span> <span>Female</span>
+                            <span class="font-semibold">School</span> <span>Not Applicable</span>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <div class="flex justify-end mt-12">
+                <button class="dha-bg-blue text-white px-10 py-2 rounded-full font-bold shadow-md hover:bg-blue-800 transition">Save</button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="mt-12 border-t py-6 bg-gray-50 text-[11px] text-gray-500">
+        <div class="max-w-7xl mx-auto px-8 flex justify-between items-center">
+            <div class="flex space-x-3 divide-x">
+                <a href="#" class="px-2 hover:underline">Sitemap</a>
+                <a href="#" class="px-2 hover:underline">DHA</a>
+                <a href="#" class="px-2 hover:underline">Accessibility</a>
+                <a href="#" class="px-2 hover:underline">Copyright</a>
+                <a href="#" class="px-2 hover:underline">Disclaimer</a>
+                <a href="#" class="px-2 hover:underline">Privacy</a>
+                <a href="#" class="px-2 hover:underline">Terms and Conditions</a>
+                <a href="#" class="px-2 hover:underline">Online Enquiry</a>
+            </div>
+            <div>
+                Copyright Defence Housing Australia, 2024.
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
