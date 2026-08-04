@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+  <meta name="theme-color" content="#0b1220">
+
+  <title>totp.sh — Offline TOTP (2FA) Code Generator | Client‑Side Authenticator</title>
+
+
+ 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#07090d;
+      --panel:#0c1017;
+      --panel-2:#0a0e14;
+      --text:#e6eefb;
+      --muted:#98a3b6;
+      --ring:#182130;
+      --blue:#3b82f6;
+      --blue-2:#2563eb;
+      --blue-3:#60a5fa;
+      --accent:#22c55e;
+      --accent-2:#16a34a;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      --radius:16px
+    }
+    html,body{height:100%}
+    body{
+      margin:0; font-family:var(--sans); color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 85% -25%, #0b1220 20%, transparent 55%),
+        radial-gradient(900px 600px at -10% 115%, #0a0f18 25%, transparent 60%),
+        linear-gradient(#000,#000)
+    }
+    .wrap{max-width:520px; margin: min(8vh,64px) auto; padding:0 16px}
+    .card{
+      position:relative;
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border:1px solid #0f172a; border-radius: var(--radius);
+      box-shadow: 0 18px 60px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.03);
+      overflow:hidden
+    }
+    .card::after{
+      content:""; position:absolute; inset:0; pointer-events:none; border-radius:inherit;
+      box-shadow: 0 0 0 1px rgba(59,130,246,.18) inset, 0 10px 40px rgba(59,130,246,.08) inset
+    }
+    .head{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 18px; border-bottom:1px solid #0f172a;
+      background: linear-gradient(180deg, rgba(59,130,246,.06), rgba(255,255,255,0))
+    }
+    .title{display:flex; align-items:center; gap:10px; font-size:16px; font-weight:700; letter-spacing:.2px; margin:0}
+    .title .material-icons{color:var(--blue)}
+    .note{font-size:12px; color:var(--muted)}
+    .body{padding:18px; display:grid; gap:14px}
+    label{font-size:12px; color:var(--muted); margin-bottom:6px; display:block}
+    .row{display:grid; gap:6px}
+    .field{
+      display:flex; align-items:center; gap:6px;
+      background:#0a0f16; border:1px solid var(--ring); border-radius:12px; padding:6px 8px;
+      transition:border-color .15s ease, box-shadow .15s ease
+    }
+    .field:focus-within{border-color: rgba(59,130,246,.55); box-shadow: 0 0 0 3px rgba(59,130,246,.15)}
+    input[type="password"], input[type="text"], select{
+      flex:1; background:transparent; border:none; outline:none; color:var(--text);
+      font-size:14px; padding:10px 6px; min-width:0
+    }
+    input::placeholder{color:#6b778e}
+    .btn{
+      appearance:none; border:1px solid #0f172a; background:#0c1117; color:#dbe6fb; border-radius:10px;
+      padding:8px 10px; font-size:13px; cursor:pointer; transition:all .15s ease; white-space:nowrap; display:inline-flex; align-items:center; gap:8px
+    }
+    .btn:hover{border-color:#1a2a45; background:#0f141b}
+    .btn-ghost{background:transparent}
+    .btn-icon{padding:8px; width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center}
+    .btn-primary{
+      background: linear-gradient(180deg, var(--blue), var(--blue-2));
+      border-color: #153a7e; color:#071023; font-weight:700
+    }
+    .btn-primary:hover{filter:brightness(1.06)}
+    .out{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      background:linear-gradient(180deg, #0b0f17, #0a0e15);
+      border:1px solid var(--ring); border-radius:12px; padding:12px 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.02)
+    }
+    .code{
+      font: 700 30px/1 var(--mono);
+      letter-spacing: 3px; color:#eaf2ff;
+      text-shadow: 0 0 14px rgba(59,130,246,.16), 0 0 18px rgba(34,197,94,.10)
+    }
+    .status{display:flex; align-items:center; gap:8px; color:var(--muted); font-size:12px}
+    .status .material-icons{font-size:16px; color:#8fb4ff}
+    .actions{display:flex; align-items:center; gap:10px}
+    .bar{height:8px; background:#0a0e14; border:1px solid var(--ring); border-radius:999px; overflow:hidden}
+    .bar > i{
+      display:block; height:100%; width:0%;
+      background: linear-gradient(90deg, var(--blue-2), var(--blue-3));
+      box-shadow: 0 0 20px rgba(59,130,246,.25) inset;
+      transition:width .2s linear
+    }
+    .grid-3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px}
+    details{background:#0a0e14; border:1px solid var(--ring); border-radius:12px; padding:10px 12px}
+    details[open]{box-shadow: 0 0 0 2px rgba(59,130,246,.08) inset}
+    details>summary{cursor:pointer; list-style:none; color:var(--muted); font-size:12px; outline:none; display:flex; align-items:center; gap:8px}
+    details>summary::-webkit-details-marker{display:none}
+    .err{color:#ff6b6b; font-size:12px; display:none}
+    .muted{color:var(--muted); font-size:12px}
+    .footer{padding:12px 18px; border-top:1px solid #0f172a; display:flex; align-items:center; justify-content:space-between}
+    .material-icons{
+      font-family:'Material Icons';
+      font-weight:normal; font-style:normal; font-size:18px; line-height:1; letter-spacing:normal; text-transform:none;
+      display:inline-block; white-space:nowrap; word-wrap:normal; direction:ltr;
+      -webkit-font-feature-settings:'liga'; -webkit-font-smoothing:antialiased
+    }
+    .btn-primary .material-icons{color:#071023}
+    @media (prefers-reduced-motion: reduce){ .bar>i{transition:none} }
+    .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0}
+    @keyframes pulse{ 0%{transform:scale(1)} 50%{transform:scale(1.08)} 100%{transform:scale(1)} }
+    .pulse{animation:pulse .25s ease}
+    .seo{max-width:720px; margin:18px auto 0; padding:0 4px; font-size:13px; color:var(--muted)}
+    .seo h2{font-size:14px; margin:0 0 8px; color:#dbe6fb}
+    .seo ul{margin:8px 0; padding-left:18px}
+    .seo li{margin:4px 0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="head">
+        <div>
+          <h1 class="title">
+            <span class="material-icons">security</span>
+            Offline TOTP (2FA) Code Generator
+          </h1>
+          <div class="note">Client‑side only. Uses Material Icons; no other network access.</div>
+        </div>
+      </div>
+
+      <div class="body">
+        <div class="row">
+          <label for="secret">2FA secret (Base32) or otpauth URI</label>
+          <div class="field">
+            <input id="secret" type="password" inputmode="text" autocomplete="off" spellcheck="false" placeholder="e.g. JBSWY3DPEHPK3PXP or otpauth://totp/...">
+            <button id="btnEye" class="btn btn-icon btn-ghost" title="Show/Hide" aria-label="Show or hide secret">
+              <span class="material-icons" id="eyeIcon">visibility</span>
+            </button>
+            <button id="btnPaste" class="btn btn-icon" title="Paste from clipboard" aria-label="Paste">
+              <span class="material-icons">content_paste</span>
+            </button>
+            <button id="btnClear" class="btn btn-icon" title="Clear" aria-label="Clear">
+              <span class="material-icons">backspace</span>
+            </button>
+          </div>
+          <div id="err" class="err">Invalid secret or unsupported format.</div>
+        </div>
+
+        <details id="adv">
+          <summary><span class="material-icons">tune</span> Advanced</summary>
+          <div class="grid-3" style="margin-top:10px">
+            <div class="row">
+              <label for="algo">Algorithm</label>
+              <select id="algo">
+                <option value="SHA-1">SHA-1</option>
+                <option value="SHA-256">SHA-256</option>
+                <option value="SHA-512">SHA-512</option>
+              </select>
+            </div>
+            <div class="row">
+              <label for="digits">Digits</label>
+              <select id="digits">
+                <option>6</option>
+                <option>7</option>
+                <option>8</option>
+              </select>
+            </div>
+            <div class="row">
+              <label for="period">Period (s)</label>
+              <select id="period">
+                <option>30</option>
+                <option>60</option>
+              </select>
+            </div>
+          </div>
+          <div class="muted" style="margin-top:10px">
+            If you paste an otpauth URI, settings are auto-detected. Defaults: 6 digits, 30s, SHA‑1.
+          </div>
+        </details>
+
+        <div class="out">
+          <div class="code" id="code">——— ———</div>
+          <div class="actions">
+            <div class="status">
+              <span class="material-icons">schedule</span>
+              <span id="remain">— s</span> left
+            </div>
+            <button id="btnCopy" class="btn btn-primary" title="Copy code" aria-label="Copy code">
+              <span class="material-icons" id="copyIcon">content_copy</span>
+              Copy
+            </button>
+          </div>
+        </div>
+        <div class="bar"><i id="prog"></i></div>
+      </div>
+
+      <div class="footer">
+        <div class="muted">Nothing stored. Secret lives only in RAM.</div>
+        <button id="btnFreeze" class="btn btn-ghost" title="Pause" aria-label="Pause">
+          <span class="material-icons" id="freezeIcon">pause</span>
+          <span class="sr-only">Pause</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <section class="seo" aria-label="About this TOTP generator">
+    <h2>Privacy‑first offline TOTP/OTP authenticator</h2>
+    <p>Generate <strong>time‑based one‑time passwords (TOTP)</strong> for <strong>two‑factor authentication (2FA)</strong> in your browser. Import <strong>otpauth</strong> URIs or <strong>Base32</strong> secrets; choose <strong>HMAC‑SHA‑1</strong>, <strong>HMAC‑SHA‑256</strong>, or <strong>HMAC‑SHA‑512</strong>; create <strong>6–8 digit OTP</strong> codes. Compatible with popular <strong>authenticator</strong> apps.</p>
+    <ul>
+      <li>Offline, client‑side TOTP/OTP — no tracking, no network.</li>
+      <li>Paste otpauth URI or Base32 secret; adjustable period and digits.</li>
+      <li>Works as a lightweight 2FA authenticator in any modern browser.</li>
+    </ul>
+  </section>
+
+  <script>
+  (() => {
+    const $ = id => document.getElementById(id);
+    const el = {
+      secret: $('secret'),
+      err: $('err'),
+      code: $('code'),
+      remain: $('remain'),
+      prog: $('prog'),
+      btnCopy: $('btnCopy'),
+      copyIcon: $('copyIcon'),
+      btnPaste: $('btnPaste'),
+      btnClear: $('btnClear'),
+      btnEye: $('btnEye'),
+      eyeIcon: $('eyeIcon'),
+      btnFreeze: $('btnFreeze'),
+      freezeIcon: $('freezeIcon'),
+      algo: $('algo'),
+      digits: $('digits'),
+      period: $('period')
+    };
+
+    const state = {
+      secretBytes: null,
+      keyCache: new Map(),
+      algorithm: 'SHA-1',
+      digits: 6,
+      period: 30,
+      lastStep: -1,
+      frozen: false,
+      parsedFromURI: false
+    };
+
+    function toUpperBase32(s){ return s.replace(/[\s-]/g,'').toUpperCase() }
+
+    function base32ToBytes(b32){
+      const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+      let clean = b32.replace(/=+$/,'').replace(/\s+/g,'').toUpperCase();
+      if (!clean || /[^A-Z2-7]/.test(clean)) throw new Error('invalid base32');
+      let bits = 0, value = 0, out = [];
+      for (let i=0;i<clean.length;i++){
+        const idx = alphabet.indexOf(clean[i]);
+        if (idx === -1) throw new Error('invalid base32');
+        value = (value << 5) | idx;
+        bits += 5;
+        if (bits >= 8){
+          out.push((value >>> (bits - 8)) & 0xff);
+          bits -= 8;
+        }
+      }
+      return new Uint8Array(out);
+    }
+
+    function hexOfBytes(arr){ return Array.from(arr).map(b=>b.toString(16).padStart(2,'0')).join('') }
+
+    function algorithmFromUri(v){
+      if (!v) return 'SHA-1';
+      const u = v.toUpperCase().replace('SHA1','SHA-1').replace('SHA256','SHA-256').replace('SHA512','SHA-512');
+      return ['SHA-1','SHA-256','SHA-512'].includes(u) ? u : 'SHA-1';
+    }
+
+    function parseOtpauthUri(input){
+      try{
+        const u = new URL(input);
+        if (u.protocol !== 'otpauth:' || u.host !== 'totp') return null;
+        const sp = u.searchParams;
+        const secret = sp.get('secret');
+        if (!secret) return null;
+        const algo = algorithmFromUri(sp.get('algorithm'));
+        const digits = parseInt(sp.get('digits') || '6',10);
+        const period = parseInt(sp.get('period') || '30',10);
+        return { secret, algo, digits, period };
+      }catch(e){ return null; }
+    }
+
+    async function importKey(secretBytes, algorithm){
+      const cacheKey = algorithm + ':' + hexOfBytes(secretBytes);
+      const hit = state.keyCache.get(cacheKey);
+      if (hit) return hit;
+      const key = await crypto.subtle.importKey('raw', secretBytes, { name:'HMAC', hash:{ name:algorithm } }, false, ['sign']);
+      state.keyCache.set(cacheKey, key);
+      return key;
+    }
+
+    function counterBytes(step){
+      const b = new Uint8Array(8);
+      let v = BigInt(step);
+      for (let i=7;i>=0;i--){ b[i] = Number(v & 0xffn); v >>= 8n; }
+      return b;
+    }
+
+    async function hotp(secretBytes, counter, algorithm){
+      const key = await importKey(secretBytes, algorithm);
+      const mac = await crypto.subtle.sign('HMAC', key, counterBytes(counter));
+      const bytes = new Uint8Array(mac);
+      const off = bytes[bytes.length - 1] & 0x0f;
+      const bin = ((bytes[off] & 0x7f) << 24) | (bytes[off+1] << 16) | (bytes[off+2] << 8) | (bytes[off+3]);
+      return bin >>> 0;
+    }
+
+    async function totp(nowMs){
+      if (!state.secretBytes) return null;
+      const step = Math.floor((nowMs/1000) / state.period);
+      if (step !== state.lastStep){
+        const int = await hotp(state.secretBytes, step, state.algorithm);
+        const mod = 10 ** state.digits;
+        const code = String(int % mod).padStart(state.digits, '0');
+        state.lastStep = step;
+        return { code, step };
+      }
+      return { code: el.code.dataset.code || null, step };
+    }
+
+    function setUIError(msg){
+      if (msg){ el.err.textContent = msg; el.err.style.display = 'block'; }
+      else{ el.err.style.display = 'none'; }
+    }
+
+    function applyParsed(parsed){
+      state.parsedFromURI = !!parsed;
+      const algo = parsed ? algorithmFromUri(parsed.algo) : 'SHA-1';
+      const digits = parsed ? (parseInt(parsed.digits,10)||6) : 6;
+      const period = parsed ? (parseInt(parsed.period,10)||30) : 30;
+      el.algo.value = algo;
+      el.digits.value = String(digits);
+      el.period.value = String(period);
+      state.algorithm = algo;
+      state.digits = digits;
+      state.period = period;
+    }
+
+    function clearSecret(){
+      state.secretBytes = null;
+      state.lastStep = -1;
+      el.code.textContent = '——— ———';
+      el.code.dataset.code = '';
+      el.remain.textContent = '— s';
+      el.prog.style.width = '0%';
+    }
+
+    function normalizeSecretInput(s){
+      const p = parseOtpauthUri(s.trim());
+      if (p){ applyParsed(p); return toUpperBase32(p.secret); }
+      applyParsed(null);
+      return toUpperBase32(s);
+    }
+
+    async function updateSecret(){
+      const raw = el.secret.value.trim();
+      if (!raw){ clearSecret(); setUIError(''); return; }
+      try{
+        const normalized = normalizeSecretInput(raw);
+        const bytes = base32ToBytes(normalized);
+        if (!bytes.length) throw new Error('empty');
+        state.secretBytes = bytes;
+        state.lastStep = -1;
+        await importKey(bytes, state.algorithm);
+        setUIError('');
+      }catch(e){
+        clearSecret();
+        setUIError('Invalid secret or unsupported format.');
+      }
+    }
+
+    function updateSettingsFromUI(){
+      state.algorithm = el.algo.value;
+      state.digits = parseInt(el.digits.value,10);
+      state.period = parseInt(el.period.value,10);
+      state.lastStep = -1;
+    }
+
+    function updateProgress(nowMs){
+      const s = nowMs/1000;
+      const into = s % state.period;
+      const remain = Math.max(0, state.period - into);
+      el.remain.textContent = remain.toFixed(1).replace('.0','') + ' s';
+      const pct = (into / state.period) * 100;
+      el.prog.style.width = pct + '%';
+    }
+
+    async function tick(){
+      if (state.frozen) return;
+      const now = Date.now();
+      updateProgress(now);
+      if (!state.secretBytes) return;
+      const res = await totp(now);
+      if (res && res.code){
+        const g = state.digits === 6 ? res.code.replace(/(\d{3})(\d{3})/,'$1 $2')
+                : state.digits === 8 ? res.code.replace(/(\d{4})(\d{4})/,'$1 $2')
+                : res.code;
+        el.code.textContent = g;
+        el.code.dataset.code = res.code;
+      }
+    }
+
+    el.secret.addEventListener('input', () => { updateSecret(); });
+    el.btnClear.addEventListener('click', () => { el.secret.value=''; updateSecret(); });
+    el.btnEye.addEventListener('click', () => {
+      const show = el.secret.type === 'password';
+      el.secret.type = show ? 'text' : 'password';
+      el.eyeIcon.textContent = show ? 'visibility_off' : 'visibility';
+    });
+    el.btnPaste.addEventListener('click', async () => {
+      try{
+        const txt = await navigator.clipboard.readText();
+        if (txt){ el.secret.value = txt.trim(); updateSecret(); }
+      }catch(e){}
+    });
+    el.btnCopy.addEventListener('click', async () => {
+      const code = el.code.dataset.code || '';
+      if (!code) return;
+      try{
+        await navigator.clipboard.writeText(code);
+        const prev = el.copyIcon.textContent;
+        el.copyIcon.textContent = 'check';
+        el.btnCopy.classList.add('pulse');
+        setTimeout(()=>{ el.copyIcon.textContent = prev; el.btnCopy.classList.remove('pulse'); }, 800);
+      }catch(e){}
+    });
+    el.btnFreeze.addEventListener('click', () => {
+      state.frozen = !state.frozen;
+      el.freezeIcon.textContent = state.frozen ? 'play_arrow' : 'pause';
+      el.btnFreeze.title = state.frozen ? 'Resume' : 'Pause';
+      el.btnFreeze.setAttribute('aria-label', state.frozen ? 'Resume' : 'Pause');
+    });
+    el.algo.addEventListener('change', () => { updateSettingsFromUI(); });
+    el.digits.addEventListener('change', () => { updateSettingsFromUI(); });
+    el.period.addEventListener('change', () => { updateSettingsFromUI(); });
+
+    updateSecret();
+    updateSettingsFromUI();
+    setInterval(tick, 200);
+    tick();
+  })();
+  </script>
+</body>
+</html>
